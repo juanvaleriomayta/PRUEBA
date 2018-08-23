@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <p:growl id="msj" autoUpdate="true"/>
+        <h:form id="frm">
+            <f:event type="preRenderView" listener="#{boletoBean.listar()}" />
+
+
+            <p:commandButton value="Nuevo" oncomplete="PF('wdlgDatos').show();" actionListener="#{boletoBean.setAccion('Registrar')}" update=":dlgDatos"/>
+            <!--<p:commandButton value="Listar" actionListener="#{boletoBean.listar()}" update="data"/>-->
+            <p:button outcome="Menu.xhtml" value="REGRESAR" icon="ui-icon-star">
+                <f:param name="productId" value="10" />
+            </p:button>
+            <p:dataTable id="data" value="#{boletoBean.lstBoleto}" var="boleto" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,10000"  emptyMessage="No esta la Lista">
+                <f:facet name="header">
+                    <p:commandButton id="toggler" type="button" value="Columnas" style="float:right" icon="ui-icon-calculator" />
+                    <p:columnToggler datasource="data" trigger="toggler"/>
+                </f:facet>
+                <p:column headerText="NOMBRE DEL PASAJERO" >
+                    <p:outputLabel value="#{boleto.pasajero}"/>
+                </p:column>
+                <p:column headerText="ORIGEN" >
+                    <p:outputLabel value="#{boleto.origenB}"/>
+                </p:column>
+                <p:column headerText="DESTINO" >
+                    <p:outputLabel value="#{boleto.destinoB}"/>
+                </p:column>
+                <p:column headerText="FECHA DE VIAJE" >
+                    <p:outputLabel value="#{boleto.fechaviajeB}"/>
+                </p:column>
+                <p:column headerText="COSTO" >
+                    <p:outputLabel value="S/.#{boleto.costoB}.00"/>
+                </p:column>
+                <p:column headerText="HORA DE VIAJE" >
+                    <p:outputLabel value="#{boleto.horaviajeB}"/>
+                </p:column>
+                <!--                <p:column style="width:50px" exportable="false" >
+                                    <p:commandButton title="MODIFICAR" icon="ui-icon-pencil" actionListener="#{boletoBean.leerID(boleto.codigob)}" oncomplete="PF('wdlgDatos').show();" update=":dlgDatos" />
+                                </p:column>-->
+
+                <p:column style="width:54px">
+                    <p:growl id="message" showDetail="true" />
+                    <p:commandButton title="ELIMINAR BOLETO" icon="ui-icon-circle-close" actionListener="#{boletoBean.eliminar(boleto)}" update="data" style="background-color:red;color:red;">
+                        <p:confirm header="Confirmación" message="¿Deseas Eliminar? " icon="ui-icon-alert" />
+                        <p:tooltip trackMouse="true"/>
+                    </p:commandButton>
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                </p:column>
+            </p:dataTable>               
+        </h:form>
+
+        <p:dialog showEffect="explode" modal="true" hideEffect="explode" header="BOLETO" widgetVar="wdlgDatos" id="dlgDatos">
+            <h:form>
+                <p:panelGrid columns="1">
+
+                    <p:outputLabel value="PASAJERO"/>
+                    <p:autoComplete value="#{boletoBean.boleto.pasajero}" completeMethod="#{pasajeroBean.completeText}" forceSelection="true" required="true" requiredMessage="INGRESAR EL NOMBRE DEL PASAJERO">
+                        <p:keyFilter regEx="/[ABCDEFGHIJKLMN ÑOPQRSTUVWXYZ]/i"/>
+                    </p:autoComplete>
+
+                    <p:outputLabel value="ORIGEN" />
+                    <p:inputText value="#{boletoBean.boleto.origenB}" required="true" requiredMessage="INGRESAR ORIGEN">
+                        <p:keyFilter regEx="/[ABCDEFGHIJKLMN ÑOPQRSTUVWXYZ]/i"/>
+                    </p:inputText>
+
+                    <p:outputLabel value="DESTINO" />
+                    <p:inputText value="#{boletoBean.boleto.destinoB}" required="true" requiredMessage="INGRESAR DESTINO">
+                        <p:keyFilter regEx="/[ABCDEFGHIJKLMN ÑOPQRSTUVWXYZ]/i"/>
+                    </p:inputText>
+
+                    <p:outputLabel value="FECHA DE VIAJE" />
+                    <p:inputMask value="#{boletoBean.boleto.fechaviajeB}" required="true" requiredMessage="INGRESAR FECHA DE VIAJE" mask="99/99/9999"/> 
+
+
+                    <p:outputLabel value="COSTO" />
+                    <p:inputText value="#{boletoBean.boleto.costoB}"  required="true" requiredMessage="INGRESAR EL COSTO DE VIAJE">
+                        <p:keyFilter regEx="/[\d\-]/"/>
+                    </p:inputText>
+
+                    <p:outputLabel value="HORA DE VIAJE" />
+                    <p:inputText value="#{boletoBean.boleto.horaviajeB}" required="true" requiredMessage="INGRESAR HORA DE VIAJE"/>
+
+
+                    <p:commandButton value="#{boletoBean.accion}" actionListener="#{boletoBean.operar()}" oncomplete="PF('wdlgDatos').hide();" update=":frm:data"/>
+                    <p:commandButton value="Cancelar" immediate="true" oncomplete="PF('wdlgDatos').hide();"/>
+                </p:panelGrid>
+            </h:form>
+
+        </p:dialog>
+    </h:body>
+</html>
+
