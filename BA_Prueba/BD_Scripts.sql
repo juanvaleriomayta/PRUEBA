@@ -67,3 +67,20 @@ INNER JOIN Cliente
 ON Prestamos.Cliente_idCliente = Cliente.idCliente
 
 /*clientes cuantos libros a pedido*/
+
+
+/*************************************************************************************************/
+
+/*ULTIMA MODIFICACION EN GITHUB*/
+
+select Prestamos.fecsalPrestamo, CONCAT(Bibliotecario.nomBibliotecario,',',Bibliotecario.apeBibliotecario) AS 'Bibliotecario',
+Detalle_Prestamo.Libro_idLibro, Cliente.nomCliente AS 'Nombre Cliente'
+from Prestamos
+INNER JOIN Bibliotecario
+ON Prestamos.Bibliotecario_idBibliotecario = Bibliotecario.idBibliotecario
+INNER JOIN Detalle_Prestamo
+ON Detalle_Prestamo.Prestamos_idPrestamo= Prestamos.idPrestamo
+INNER JOIN Libro
+ON Detalle_Prestamo.Libro_idLibro = Libro.idLibro
+INNER JOIN Cliente
+ON Prestamos.Cliente_idCliente = Cliente.idCliente
